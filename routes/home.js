@@ -5,7 +5,7 @@ const router = require("express").Router()
 //SIGNUP ROUTES
 //one
 router.get("/auth/signup", (req, res) => {
-    res.send("signup get")
+    res.render("auth/signup")
 });
 //two
 router.post("/auth/signup", (req, res) => {

@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const bcrypt = require("bcrypt")
 
 //GETTING THE PORT AND SECRET FROM THE .ENV FILE
 const PORT = process.env.PORT || "3000";

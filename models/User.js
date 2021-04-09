@@ -1,5 +1,6 @@
 //IMPORTING THE SCHEMA FOR MONGOOS
-const { Schema, model } = require("../db/connection.js");
+//go back a folder, go into db, and then go into the connection file
+const { Schema, model } = require("../db/connection");
 
 //IMAGE SCHEMA
 const Image = new Schema({
@@ -17,7 +18,7 @@ const UserImageSchema = new Schema({
     { timestamps: true })
 
 //USER MODEL
-const User = model("User", UserSchema)
+const User = model("User", UserImageSchema)
 
 //EXPORT THE USER MODEL
 module.exports = User

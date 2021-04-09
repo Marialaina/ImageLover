@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt")
+//setting the view engine
+app.set("view engine", "ejs")
 
 //GETTING THE PORT AND SECRET FROM THE .ENV FILE
 const PORT = process.env.PORT || "3000";

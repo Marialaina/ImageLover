@@ -1,20 +1,66 @@
+// grab environment variables
+require("dotenv").config();
+// IMPORT EXPRESS
 const express = require("express");
-const app = express();
-//importing bcrypt
-const bcrypt = require("bcrypt")
-//setting the view engine
-app.set("view engine", "ejs")
-//importing User model
-const User = require("./models/User")
+// IMPORT DATABASE CONNECTION
+const mongoose = require("./db/connection");
 
-//GETTING THE PORT AND SECRET FROM THE .ENV FILE
-const PORT = process.env.PORT || "3000";
+//IMPORT MIDDLEWARE
+const methodOverride = require("method-override");
+const morgan = require("morgan");
+const cors = require("cors");
+// GET PORT FROM ENV OR DEFAULT PORT
+const PORT = process.env.PORT || "2021";
 const SECRET = process.env.SECRET || "secret"
+const HomeRouter = require("./routes/home.js");
+// Sessions Middleware
+const session = require("express-session"); // create session cookies
+const connect = require("connect-mongodb-session")(session) // store cookies in mongo
 
-//GETTING THE ROUTERS INSIDE home.js
-//I need to do this to get data to render on the page
-const HomeRouter = require("./routes/home.js")
-app.use("/", HomeRouter)
+/////////////////////////////////////
+// Create Express Application Object
+/////////////////////////////////////
+
+const app = express();
+
+/////////////////////////////////////
+// Set the View Engine
+/////////////////////////////////////
+app.set("view engine", "ejs");
+
+/////////////////////////////////////
+// Setup Middleware
+/////////////////////////////////////
+app.use(cors()); // Prevent Cors Errors if building an API
+app.use(methodOverride("_method")); // Swap method of requests with _method query
+app.use(express.static("public")); // serve the public folder as static
+app.use(morgan("tiny")); // Request Logging
+app.use(express.json()); // Parse json bodies
+app.use(express.urlencoded({ extended: false })); //parse bodies from form submissions
+// SESSION MIDDLEWARE REGISTRATION (adds req.session property)
+app.use(
+  session({
+    secret: SECRET,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+    },
+    saveUninitialized: true, // create session regardless of changes
+    resave: true, //save regardless of changes
+    store: new connect({
+      uri: process.env.MONGODB_URL,
+      databaseName: "sessions",
+      collection: "sessions",
+    }),
+  })
+);
+
+/////////////////////////////////////
+// Routes and Routers
+/////////////////////////////////////
+
+//HomeRouter
+app.use("/", HomeRouter);
+
 
 app.listen(PORT, () =>
   console.log("🚀 Server Launch 🚀", `Listening on Port ${PORT}`)

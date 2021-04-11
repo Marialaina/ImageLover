@@ -1,8 +1,14 @@
 //AUTH RELATED ROUTES
 
-const User = require("../models/User");
-
+// const User = require("../models/User");
 const router = require("express").Router()
+
+//importing bcrypt
+const bcrypt = require("bcrypt")
+
+//importing User model
+const User = require("../models/User")
+
 
 //SIGNUP ROUTES
 //one
@@ -20,6 +26,8 @@ router.post("/auth/signup", async (req, res) => {
         await User.create(req.body)
         //redirect to login page
         res.redirect("/auth/login")
+
+        console.log(User)
     } catch (error) {
         res.json(error)
     }
@@ -28,7 +36,7 @@ router.post("/auth/signup", async (req, res) => {
 //LOGIN ROUTES
 //one
 router.get("/auth/login", (req, res) => {
-    res.send("login get")
+    res.render("auth/login")
 });
 //two
 router.post("/auth/login", (req, res) => {

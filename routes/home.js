@@ -66,8 +66,11 @@ router.post("/auth/login", async (req,res) => {
 })
 
 //LOGOUT ROUTE
-router.get("/auth/logout", (req, res) => {
-    res.send("logout")
+router.get("/auth/logout", async (req, res) => {
+    // remover the userId property from the session
+    res.session.userId = null
+    //redirect back to the main page
+    res.redirect("/")
 })
 
 module.exports = router

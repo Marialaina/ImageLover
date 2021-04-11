@@ -39,9 +39,31 @@ router.get("/auth/login", (req, res) => {
     res.render("auth/login")
 });
 //two
-router.post("/auth/login", (req, res) => {
-    res.send("login post")
-});
+router.post("/auth/login", async (req,res) => {
+    try{
+        //check if the user exists (must use findOne and not find)
+        const user = await User.findOne({ username: req.body.username })
+        if (user) {
+            //create user session property
+            const result = await bcrypt.compare(req.body.password, user.password)
+            if (result) {
+                req.session.userId = user._id
+                //redirect to /images
+                res.redirect("/images")
+            } 
+            //send error is password does not match
+            else {
+                res.json({ error: "User does not exist "})
+            }
+        } 
+        //send error if user does not match
+        else {
+            res.json({ error: "user does not exist"})
+          }
+        } catch (error) {
+        res.json(error)
+    }
+})
 
 //LOGOUT ROUTE
 router.get("/auth/logout", (req, res) => {

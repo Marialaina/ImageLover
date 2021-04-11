@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <!-- THE HEADER TAG PARTIAL -->
+    <%- include("partials/header") %>
+    <main>
+      <!-- *********DISPLAY OUR GOALS********* -->
+      <h1 class="title">My Goals</h1>
+      <a href="/auth/logout"><button class="button">Logout</button></a>
+      <% for (images of images) { %>
+      <img src="<%= images.text %>" >
+      <% } %>
+
+      <!-- **********NEW GOALS FORM**************** -->
+      <form action="/images" method="post">
+        <input type="text" placeholder="new goal" name="img" />
+        <input type="submit" value="add image" />
+      </form>
+    </main>
+    <!-- THE HEAD TAG PARTIAL -->
+    <%- include("partials/footer") %>
+  </body>
+</html>

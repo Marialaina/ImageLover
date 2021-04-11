@@ -4,7 +4,6 @@ require("dotenv").config();
 const express = require("express");
 // IMPORT DATABASE CONNECTION
 const mongoose = require("./db/connection");
-
 //IMPORT MIDDLEWARE
 const methodOverride = require("method-override");
 const morgan = require("morgan");
@@ -17,20 +16,13 @@ const HomeRouter = require("./routes/home.js");
 const session = require("express-session"); // create session cookies
 const connect = require("connect-mongodb-session")(session) // store cookies in mongo
 
-/////////////////////////////////////
 // Create Express Application Object
-/////////////////////////////////////
-
 const app = express();
 
-/////////////////////////////////////
 // Set the View Engine
-/////////////////////////////////////
 app.set("view engine", "ejs");
 
-/////////////////////////////////////
 // Setup Middleware
-/////////////////////////////////////
 app.use(cors()); // Prevent Cors Errors if building an API
 app.use(methodOverride("_method")); // Swap method of requests with _method query
 app.use(express.static("public")); // serve the public folder as static
@@ -54,9 +46,9 @@ app.use(
   })
 );
 
-/////////////////////////////////////
+
 // Routes and Routers
-/////////////////////////////////////
+
 
 //HomeRouter
 app.use("/", HomeRouter);

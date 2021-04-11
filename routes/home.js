@@ -2,13 +2,36 @@
 
 // const User = require("../models/User");
 const router = require("express").Router()
-
 //importing bcrypt
 const bcrypt = require("bcrypt")
-
 //importing User model
 const User = require("../models/User")
 
+//MIDDLEWARE TO CHECK IF USERID IS IN SESSIONS AND CREATE REQ.USER
+const addUserToRequest = async (req, res, next) => {
+    if (req.session.userId) {
+        req.user = await User.findById(req.session.userId)
+        next()
+    } else {
+        next()
+    }
+    console.log(req)
+}
+
+//AUTH MIDDLEWARE
+const isAuthorized = (req, res, next) => {
+    if (req.user) {
+        next()
+    } else {
+        res.redirect("/auth/login")
+    }
+}
+//router specified middleware
+router.use(addUserToRequest)
+//router routes
+router.get("/", (req, res) => {
+    res.render("home")
+})
 
 //SIGNUP ROUTES
 //one
@@ -53,7 +76,7 @@ router.post("/auth/login", async (req,res) => {
             } 
             //send error is password does not match
             else {
-                res.json({ error: "User does not exist "})
+                res.json({ error: "User does not exist"})
             }
         } 
         //send error if user does not match
@@ -66,11 +89,33 @@ router.post("/auth/login", async (req,res) => {
 })
 
 //LOGOUT ROUTE
-router.get("/auth/logout", async (req, res) => {
-    // remover the userId property from the session
-    res.session.userId = null
-    //redirect back to the main page
-    res.redirect("/")
+//Logout Route
+router.get("/auth/logout", (req, res) => {
+  // remove the user property from the session
+  req.session.userId = null
+  // redirect back to the main page
+  res.redirect("/")
+})
+
+// Goals Index Route render view (we will include new form on index page) (protected by auth middleware)
+router.get("/images", isAuthorized, async (req, res) => {
+    const user = await User.findOne({ username: req.user.username })
+
+    res.render("images", {
+        images: req.user.images
+    })
+})
+
+//images being created when the form submitted
+router.post("/images", isAuthorized, async (req, res) => {
+    //fetch up to date user
+    const user = await User.findOne({ username: req.user.username })
+    //push new goal and save
+    user.images.push(req.body)
+    await user.save()
+    //redirectc back to images index
+    res.redirect("/images")
+    
 })
 
 module.exports = router
